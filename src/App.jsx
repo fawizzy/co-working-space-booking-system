@@ -1,7 +1,7 @@
-// App.js
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import DeskGrid from './components/DeskGrid';
+import BookingForm from './components/BookingForm';
 
 import { DESK_TYPES, MEMBERSHIP_TIERS, TEAM_DESK_HOURLY_RATE } from './constants';
 
@@ -67,6 +67,66 @@ function App() {
     }
   };
   
+  const calculatePrice = () => {
+    if (!selectedDesk) return { basePrice: 0, discount: 0, total: 0 };
+    
+    let hourlyRate;
+    if (selectedDesk.type === DESK_TYPES.TEAM) {
+      hourlyRate = TEAM_DESK_HOURLY_RATE;
+    } else {
+      hourlyRate = Object.values(MEMBERSHIP_TIERS).find(tier => tier.id === membershipTier)?.hourlyRate || 0;
+    }
+    
+    const basePrice = hourlyRate * hours;
+    let discount = 0;
+    
+    // Apply discount for bookings over 3 hours
+    if (hours > 3) {
+      discount = basePrice * 0.1; // 10% discount
+    }
+    
+    const total = basePrice - discount;
+    
+    return { basePrice, discount, total };
+  };
+  
+  const handleBooking = () => {
+    if (!selectedDesk || !bookingDate || !bookingTime) return;
+    
+    const { basePrice, discount, total } = calculatePrice();
+    
+    // Create new booking
+    const newBooking = {
+      id: Date.now(),
+      deskId: selectedDesk.id,
+      deskNumber: selectedDesk.number,
+      deskType: selectedDesk.type,
+      membershipTier: selectedDesk.type === DESK_TYPES.TEAM ? 'team' : membershipTier,
+      hours,
+      date: bookingDate,
+      time: bookingTime,
+      basePrice,
+      discount,
+      total,
+      timestamp: new Date().toISOString()
+    };
+    
+    // Update bookings
+    setBookings([...bookings, newBooking]);
+    
+    // Update desk status
+    setDesks(desks.map(desk => 
+      desk.id === selectedDesk.id ? { ...desk, booked: true } : desk
+    ));
+    
+    // Reset form
+    setSelectedDesk(null);
+    setHours(1);
+  };
+
+ 
+
+  const priceDetails = calculatePrice();
   
   
  
@@ -85,6 +145,22 @@ function App() {
             selectedDesk={selectedDesk}
             onDeskSelect={handleDeskSelect}
           />
+           <div className="booking-form">
+            <h2>Booking Details</h2>
+            <BookingForm
+              selectedDesk={selectedDesk}
+              membershipTier={membershipTier}
+              setMembershipTier={setMembershipTier}
+              bookingDate={bookingDate}
+              setBookingDate={setBookingDate}
+              bookingTime={bookingTime}
+              setBookingTime={setBookingTime}
+              hours={hours}
+              setHours={setHours}
+              priceDetails={priceDetails}
+              onBooking={handleBooking}
+            />
+          </div>
         </div>
       </div>
     </div>
