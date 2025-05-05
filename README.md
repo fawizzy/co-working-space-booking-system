@@ -1,12 +1,14 @@
-# React + Vite
+# Co-working Space Booking System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React.js application for managing bookings in a co-working space with multiple desk types and membership tiers.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Visual desk representation**: 15 total desks (10 individual, 5 team)
+- **Membership tier pricing**:
+  - Individual desks:
+    - Basic: $10/hour
+    - Premium: $15/hour
+    - Executive: $20/hour
+  - Team desks: $25/hour (fixed rate)
+- **Automatic discounts**: 10% off for
