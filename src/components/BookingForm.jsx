@@ -1,4 +1,3 @@
-import React from 'react';
 import { DESK_TYPES, MEMBERSHIP_TIERS, TEAM_DESK_HOURLY_RATE, DISCOUNT_PERCENTAGE } from '../constants';
 
 const BookingForm = ({ 

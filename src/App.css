@@ -1,7 +1,10 @@
 @import 'src/styles/layout.css';
 @import 'src/styles/desk-grid.css';
 @import 'src/styles/forms.css';
-
+@import 'src/styles/dashboard.css';
+@import 'src/styles/components.css';
+@import 'src/styles/charts.css';
+@import 'src/styles/tables.css';
 
 :root {
   --primary: #3498db;

@@ -1,4 +1,3 @@
-import React from 'react';
 import { DESK_TYPES } from '../constants';
 
 const DeskGrid = ({ desks, selectedDesk, onDeskSelect }) => {

@@ -46,3 +46,22 @@
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
+
+
+  @media (max-width: 768px) {
+    .booking-area {
+      flex-direction: column;
+    }
+    
+    .desks-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .stats-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .chart-container {
+      flex-direction: column;
+    }
+  }

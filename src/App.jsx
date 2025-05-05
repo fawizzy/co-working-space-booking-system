@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import DeskGrid from './components/DeskGrid';
 import BookingForm from './components/BookingForm';
-
+import RevenueStats from './components/RevenueStats';
+import RevenueCharts from './components/RevenueCharts';
+import BookingHistory from './components/BookingHistory';
 import { DESK_TYPES, MEMBERSHIP_TIERS, TEAM_DESK_HOURLY_RATE } from './constants';
 
 function App() {
@@ -123,13 +125,43 @@ function App() {
     setSelectedDesk(null);
     setHours(1);
   };
+  
+  // Calculate revenue stats
+  const calculateStats = () => {
+    const totalRevenue = bookings.reduce((sum, booking) => sum + booking.total, 0);
+    
+    const revenueTiers = {
+      basic: bookings
+        .filter(b => b.membershipTier === MEMBERSHIP_TIERS.BASIC.id)
+        .reduce((sum, b) => sum + b.total, 0),
+      premium: bookings
+        .filter(b => b.membershipTier === MEMBERSHIP_TIERS.PREMIUM.id)
+        .reduce((sum, b) => sum + b.total, 0),
+      executive: bookings
+        .filter(b => b.membershipTier === MEMBERSHIP_TIERS.EXECUTIVE.id)
+        .reduce((sum, b) => sum + b.total, 0),
+      team: bookings
+        .filter(b => b.membershipTier === 'team')
+        .reduce((sum, b) => sum + b.total, 0),
+    };
+    
+    const bookingsCount = bookings.length;
+    const totalHoursBooked = bookings.reduce((sum, b) => sum + parseInt(b.hours), 0);
+    
+    return { totalRevenue, revenueTiers, bookingsCount, totalHoursBooked };
+  };
+  
+  const resetAllBookings = () => {
+    if (window.confirm('Are you sure you want to reset all bookings?')) {
+      initializeDesks();
+      setBookings([]);
+      setSelectedDesk(null);
+    }
+  };
 
- 
-
+  const stats = calculateStats();
   const priceDetails = calculatePrice();
-  
-  
- 
+
   return (
     <div className="container">
       <header>
@@ -137,15 +169,35 @@ function App() {
         <p>Book your ideal workspace for individual or team productivity</p>
       </header>
       
-      <div className="booking-area">
-        <div className="desk-container">
-          <h2>Select a Desk</h2>
-          <DeskGrid 
-            desks={desks} 
-            selectedDesk={selectedDesk}
-            onDeskSelect={handleDeskSelect}
-          />
-           <div className="booking-form">
+      <div className="tab-container">
+        <div className="tabs">
+          <div 
+            className={`tab ${activeTab === 'booking' ? 'active' : ''}`}
+            onClick={() => setActiveTab('booking')}
+          >
+            Booking System
+          </div>
+          <div 
+            className={`tab ${activeTab === 'dashboard' ? 'active' : ''}`}
+            onClick={() => setActiveTab('dashboard')}
+          >
+            Revenue Dashboard
+          </div>
+        </div>
+      </div>
+      
+      {activeTab === 'booking' && (
+        <div className="booking-area">
+          <div className="desk-container">
+            <h2>Select a Desk</h2>
+            <DeskGrid 
+              desks={desks} 
+              selectedDesk={selectedDesk}
+              onDeskSelect={handleDeskSelect}
+            />
+          </div>
+          
+          <div className="booking-form">
             <h2>Booking Details</h2>
             <BookingForm
               selectedDesk={selectedDesk}
@@ -159,10 +211,23 @@ function App() {
               setHours={setHours}
               priceDetails={priceDetails}
               onBooking={handleBooking}
+              onReset={resetAllBookings}
             />
           </div>
         </div>
-      </div>
+      )}
+      
+      {activeTab === 'dashboard' && (
+        <div className="dashboard">
+          <h2>Revenue Dashboard</h2>
+          
+          <RevenueStats stats={stats} desks={desks} />
+          
+          <RevenueCharts stats={stats} desks={desks} />
+          
+          <BookingHistory bookings={bookings} />
+        </div>
+      )}
     </div>
   );
 }
